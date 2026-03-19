@@ -14,6 +14,8 @@ int8_t stack_pointer;
 uint8_t delay_timer;
 uint8_t sound_timer;
 
+float timer_accumulator = 0.0f;
+
 
 void memory_init() {
     // Memory

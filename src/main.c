@@ -17,7 +17,19 @@ int main() {
     {
         // Update
         //----------------------------------------------------------------------------------
-        //
+        timer_accumulator += GetFrameTime();
+
+        while (timer_accumulator >= TIMER_STEP) {
+            // Update timers
+            if (delay_timer > 0) {
+                delay_timer--;
+            }
+            if (sound_timer > 0) {
+                sound_timer--;
+            }
+
+            timer_accumulator -= TIMER_STEP;
+        }
         //----------------------------------------------------------------------------------
 
         // Draw

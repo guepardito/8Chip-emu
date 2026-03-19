@@ -30,6 +30,8 @@ extern int8_t stack_pointer;
 //---------------------------
 extern uint8_t delay_timer;
 extern uint8_t sound_timer;
+extern float timer_accumulator;
+const float TIMER_STEP = 1.0f / 60.0f;
 //---------------------------
 
 // Functions
