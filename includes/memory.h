@@ -23,6 +23,7 @@ extern uint16_t I;
 //---------------------------
 #define STACK_SIZE 64
 extern uint16_t stack[STACK_SIZE];
+extern uint8_t stack_pointer;
 //---------------------------
 
 // Timers
@@ -33,5 +34,9 @@ extern uint8_t sound_timer;
 
 // Functions
 void memory_init();
+
+// Stack operations
+void stack_push(uint16_t value);
+uint16_t stack_pop();
 
 #endif // MEMORY_H

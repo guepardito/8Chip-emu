@@ -9,6 +9,7 @@ uint16_t PC;
 uint16_t I;
 
 uint16_t stack[STACK_SIZE];
+int8_t stack_pointer;
 
 uint8_t delay_timer;
 uint8_t sound_timer;
@@ -50,11 +51,30 @@ void memory_init() {
     I = 0;
 
     // Stack
-    for (int i = 0; i < STACK_SIZE; i++) {
-        stack[i] = 0;
-    }
+    stack_pointer = -1;
 
     // Timers
     delay_timer = 0;
     sound_timer = 0;
+}
+
+// Stack operations
+int stack_push(uint16_t value) {
+    if (!(stack_pointer < -1) && stack_pointer+1 < STACK_SIZE)
+    {
+        stack_pointer++;
+        stack[stack_pointer] = value;
+        return 0;
+    }
+    return -1;
+}
+
+uint16_t stack_pop() {
+    if (!(stack_pointer < -1) && stack_pointer < STACK_SIZE+1)
+    {
+        stack_pointer--;
+        uint16_t value = stack[stack_pointer];
+        return value;
+    }
+    return -1;
 }
