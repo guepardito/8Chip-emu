@@ -19,5 +19,6 @@ typedef struct {
 void memory_init(Memory *mem);
 uint8_t memory_read(Memory *mem, uint16_t addr);
 void memory_write(Memory *mem, uint16_t addr, uint8_t value);
+void memory_dump_file(Memory *mem, const char *filename);
 
 #endif // MEMORY_H

@@ -30,6 +30,8 @@ int main() {
 
     cpu_load_rom(&cpu, "ROMs/test_opcode.ch8");
 
+    memory_dump_file(&mem, "mem_dump.dat");
+
     while (!WindowShouldClose())
     {
         // Update
