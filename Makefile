@@ -13,6 +13,9 @@ WAR = -Wall -Wextra -pedantic-errors
 # Libraries
 LIBS = -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 
+# Default ROM if none provided
+DEFAULT_ROM = ROMs/test_opcode.ch8
+
 # Default target
 all: $(TARGET)
 
@@ -26,5 +29,5 @@ clean:
 # Rebuild from scratch
 re: clean all
 
-run:
-	./build/chip8
+run: $(TARGET)
+	$(TARGET) $(if $(ARGS),$(ARGS),$(DEFAULT_ROM))

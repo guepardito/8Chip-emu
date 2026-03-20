@@ -6,7 +6,16 @@
 #include "../includes/keyboard.h"
 #include "../includes/CPU.h"
 
-int main() {
+int main(int argc, char *argv[]) {
+    char* rom_path;
+    // Check program arguments
+    if (argc > 2) {
+        fprintf(stderr, "Too Many arguments");
+    } if (argc == 2) {
+        rom_path = argv[1];
+        printf("%s", rom_path);
+    }
+
     // Initialization
     InitWindow(DISPLAY_WIDTH * 16, DISPLAY_HEIGHT * 16, "8 Chip Emulator");
 
@@ -30,7 +39,7 @@ int main() {
 
     memory_built_in_font(&mem);
 
-    cpu_load_rom(&cpu, "ROMs/test_opcode.ch8");
+    cpu_load_rom(&cpu, rom_path);
 
     memory_dump_file(&mem, "mem_dump.dat");
 

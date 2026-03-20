@@ -39,13 +39,95 @@ void cpu_load_rom(CPU *cpu, const char *rom_path) {
 
     fclose(rom);
 
+    TraceLog(LOG_INFO, "Opened %s ROM", rom_path);
+
     // Set program counter to start of program
     cpu->PC = 0x200;
 }
 
 
 void cpu_cycle(CPU *cpu) {
-    // Fetch instruction, move to the next instruction
+    // Fetch instruction
+    uint8_t first_byte = cpu->memory->data[cpu->PC];
+    uint8_t second_byte = cpu->memory->data[cpu->PC+1];
+    // TraceLog(LOG_INFO, "Instruction: %X %X", first_byte, second_byte);
+
+    uint16_t opcode = (first_byte << 8) | second_byte;
+
+    switch (opcode & 0xF000)
+    {
+        case 0x0000:
+            switch (opcode)
+            {
+                case 0x00E0:
+                    /* 
+                    00E0 (Clean)
+                    This is pretty simple: It should clear the display,
+                    turning all pixels off to 0.
+                    */
+                    break;
+
+                case 0x00EE:
+                    /*
+                    00EE (Returning from a subroutine)
+                    Pops the last address from the stack and sets the PC to it.
+                    */
+                    break;
+                
+                default:
+                    break;
+            }
+            break;
+        
+        case 0x1000:
+            /* 
+            1NNN (Jump)
+            This instruction should simply set PC to NNN,
+            causing the program to jump to that memory location.
+            Do not increment the PC afterwards, it jumps directly there.
+            */
+            break;
+
+        case 0x6000:
+            /*
+            6XNN (Set register VX)
+            Simply set the register VX to the value NN.
+            */
+            break;
+        
+        case 0x7000:
+            /*
+            6XNN (Add value to register VX)
+            Add the value NN to VX.
+            */
+            break;
+
+        case 0xA000:
+            /*
+            ANNN (Set index)
+            This sets the index register I to the value NNN.
+            */
+            break;
+
+        case 0xD000:
+            /*
+            AXYN (Display/draw)
+            It will draw an N pixels tall sprite from the memory location
+            that the I index register is holding to the screen,
+            at the horizontal X coordinate in VX and the Y coordinate in VY.
+            All the pixels that are “on” in the sprite will
+            flip the pixels on the screen that it is drawn to
+            (from left to right, from most to least significant bit).
+            If any pixels on the screen were turned “off” by this,
+            the VF flag register is set to 1. Otherwise, it’s set to 0.
+            */
+            break;
+            
+        default:
+            break;
+    }
+    
+    // Move program counter to the next instruction
     cpu->PC += 2;
 }
 
