@@ -5,7 +5,7 @@ CC = gcc
 TARGET = build/chip8
 
 # Source files
-SRC = src/main.c src/memory.c src/display.c
+SRC = src/main.c src/memory.c src/display.c src/keyboard.c src/CPU.c
 
 # Pedantic warnings
 WAR = -Wall -Wextra -pedantic-errors

@@ -10,35 +10,14 @@
 //---------------------------
 #define MEMORY_SIZE 4096
 
-extern uint8_t RAM_memory[MEMORY_SIZE];
-//---------------------------
-
-// Pointers
-//---------------------------
-extern uint16_t PC;
-extern uint16_t I;
-//---------------------------
-
-// Stack
-//---------------------------
-#define STACK_SIZE 64
-extern uint16_t stack[STACK_SIZE];
-extern int8_t stack_pointer;
-//---------------------------
-
-// Timers
-//---------------------------
-extern uint8_t delay_timer;
-extern uint8_t sound_timer;
-extern float timer_accumulator;
-const float TIMER_STEP = 1.0f / 60.0f;
+typedef struct {
+    uint8_t data[MEMORY_SIZE];
+} Memory;
 //---------------------------
 
 // Functions
-void memory_init();
-
-// Stack operations
-int stack_push(uint16_t value);
-uint16_t stack_pop();
+void memory_init(Memory *mem);
+uint8_t memory_read(Memory *mem, uint16_t addr);
+void memory_write(Memory *mem, uint16_t addr, uint8_t value);
 
 #endif // MEMORY_H
