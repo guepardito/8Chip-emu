@@ -55,10 +55,14 @@ int main(int argc, char *argv[]) {
 
         double seconds_per_instruction = 1.0 / chip8_ips;
 
-        while (instruction_accumulator >= seconds_per_instruction) {
+        int max_instructions_per_frame = 100;
+        int executed = 0;
+        while (instruction_accumulator >= seconds_per_instruction && executed < max_instructions_per_frame) {
             cpu_cycle(&cpu);
             instruction_accumulator -= seconds_per_instruction;
+            executed++;
         }
+        TraceLog(LOG_INFO, "Executing %d instructions this frame", executed);
 
         while (timer_accumulator >= TIMER_STEP) {
             // Update timers
@@ -82,7 +86,7 @@ int main(int argc, char *argv[]) {
         //----------------------------------------------------------------------------------
         BeginDrawing();
             ClearBackground(BLACK);
-            // display_test();
+            //display_test();
             display_draw();
             DrawTextureEx(display_texture, (Vector2){0, 0}, 0.0f, 16.0f, WHITE);
         EndDrawing();

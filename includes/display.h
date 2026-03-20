@@ -14,7 +14,7 @@ extern Texture2D display_texture;
 void display_clear(); // Clear the display by setting all pixels to 0, also
 void display_init(); // Initialize the display
 void display_draw(); // Draw the display matrix to the screen
-void display_set_pixel(uint8_t x, uint8_t y, uint8_t value); // Set a pixel in the display matrix
+int display_set_pixel(uint8_t x, uint8_t y, uint8_t value); // Set a pixel in the display matrix
 void display_test(); // Test function to print the display matrix to the console
 
 

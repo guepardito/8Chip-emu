@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "../includes/display.h"
+#include <string.h>
 
+// (I should've made a Display struct, but for now it's not worth the time to refactor the display)
 
 // Variables initialization
 //---------------------------
@@ -17,21 +19,26 @@ void display_clear() {
             display_matrix[i][j] = 0;
         }
     }
+
+    if (display_image.data != NULL) {
+        memset(display_image.data, 0, DISPLAY_WIDTH * DISPLAY_HEIGHT * 4);
+        UpdateTexture(display_texture, display_image.data);
+    }
 }
 
 void display_init() {
-    display_clear();
-
     display_image = GenImageColor(DISPLAY_WIDTH, DISPLAY_HEIGHT, BLACK);
     display_texture = LoadTextureFromImage(display_image);
 
     SetTextureFilter(display_texture, TEXTURE_FILTER_POINT);
+
+    display_clear();
 }
 
 void display_draw() {
-    for (int x = 0; x < DISPLAY_WIDTH; x++)
+    for (int y = 0; y < DISPLAY_HEIGHT; y++)
     {
-        for (int y = 0; y < DISPLAY_HEIGHT; y++)
+        for (int x = 0; x < DISPLAY_WIDTH; x++)
         {
             unsigned char* pixel = ((unsigned char*) display_image.data) + (y*DISPLAY_WIDTH + x) * 4;
             if (display_matrix[x][y] == 0)
@@ -41,16 +48,17 @@ void display_draw() {
                 SetPixelColor(pixel, WHITE, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
             }
         }
-        UpdateTexture(display_texture, display_image.data);
     }
+    UpdateTexture(display_texture, display_image.data);
 }
 
-void display_set_pixel(uint8_t x, uint8_t y, uint8_t value) {
-    if (x >= DISPLAY_WIDTH || y >= DISPLAY_HEIGHT) {
-        fprintf(stderr, "Error: Pixel coordinates out of bounds (%d, %d)\n", x, y);
-        return;
-    }
-    display_matrix[x][y] = value;
+
+int display_set_pixel(uint8_t x, uint8_t y, uint8_t value) {
+    uint8_t old_pixel = display_matrix[x][y];
+    display_matrix[x][y] ^= value;
+
+    // Return 1 if a pixel was turned off (from 1 → 0), else 0
+    return (old_pixel == 1 && display_matrix[x][y] == 0) ? 1 : 0;
 }
 
 void display_test() {
@@ -58,12 +66,7 @@ void display_test() {
     {
         for (int x = 0; x < DISPLAY_WIDTH; x++)
         {
-            if (GetRandomValue(0, 1) < 0.5)
-            {
-                display_matrix[x][y] = 1;
-            } else {
-                display_matrix[x][y] = 0;
-            }
+            display_matrix[x][y] = GetRandomValue(0,1);
         }
     }
 }

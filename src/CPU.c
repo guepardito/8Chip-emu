@@ -1,4 +1,5 @@
 #include "../includes/CPU.h"
+#include "../includes/display.h"
 #include <stdio.h>
 #include <string.h>
 #include "raylib.h"
@@ -65,6 +66,7 @@ void cpu_cycle(CPU *cpu) {
                     This is pretty simple: It should clear the display,
                     turning all pixels off to 0.
                     */
+                    display_clear();
                     break;
 
                 case 0x00EE:
@@ -86,30 +88,42 @@ void cpu_cycle(CPU *cpu) {
             causing the program to jump to that memory location.
             Do not increment the PC afterwards, it jumps directly there.
             */
+            cpu->PC = opcode & 0x0FFF;
             break;
 
-        case 0x6000:
+        case 0x6000: {
             /*
             6XNN (Set register VX)
             Simply set the register VX to the value NN.
             */
+            uint8_t X = (opcode >> 8) & 0x0F;
+            uint8_t NN = opcode & 0xFF;
+            cpu->V[X] = NN;
             break;
+        }
         
-        case 0x7000:
+        case 0x7000: {
             /*
-            6XNN (Add value to register VX)
+            7XNN (Add value to register VX)
             Add the value NN to VX.
             */
+            uint8_t X = (opcode >> 8) & 0x0F;
+            uint8_t NN = opcode & 0xFF;
+            cpu->V[X] += NN;
             break;
+        }
 
-        case 0xA000:
+        case 0xA000: {
             /*
             ANNN (Set index)
             This sets the index register I to the value NNN.
             */
+            uint16_t NNN = opcode & 0x0FFF;
+            cpu->I = NNN;
             break;
+        }
 
-        case 0xD000:
+        case 0xD000: {
             /*
             AXYN (Display/draw)
             It will draw an N pixels tall sprite from the memory location
@@ -121,7 +135,37 @@ void cpu_cycle(CPU *cpu) {
             If any pixels on the screen were turned “off” by this,
             the VF flag register is set to 1. Otherwise, it’s set to 0.
             */
+            uint8_t X = (opcode >> 8) & 0x0F;
+            uint8_t Y = (opcode >> 4) & 0x0F;
+            uint8_t N = opcode & 0x0F;
+
+            uint8_t VX = cpu->V[X];
+            uint8_t VY = cpu->V[Y];
+
+            VX %= DISPLAY_WIDTH -1;
+            VY %= DISPLAY_HEIGHT -1;
+
+            cpu->VF = 0;
+
+            for (uint8_t row = 0; row < N; row++)
+            {
+                uint8_t sprite_data = cpu->memory->data[cpu->I + row];
+                for (uint8_t col = 0; col < 8; col++)
+                {
+                    if ((sprite_data & (0x80 >> col)) != 0)
+                    {
+                        if (display_set_pixel(VX + col, VY + row, 1)) {
+                            cpu->VF = 1;
+                        }
+                    }
+                    X++;
+                }
+                Y++;
+                if (Y >= DISPLAY_HEIGHT) break;
+            }
+            
             break;
+        }
             
         default:
             break;

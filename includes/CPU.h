@@ -19,6 +19,7 @@ typedef struct {
     uint8_t delay_timer;
     uint8_t sound_timer;
 
+    uint8_t VF;
 } CPU;
 
 void cpu_init(CPU *cpu, Memory *mem);
