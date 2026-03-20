@@ -28,6 +28,7 @@ int main() {
     double timer_accumulator = 0.0;
     const double TIMER_STEP = 1.0 / 60.0; // 60Hz
 
+    cpu_load_rom(&cpu, "ROMs/test_opcode.ch8");
 
     while (!WindowShouldClose())
     {
